@@ -7,6 +7,8 @@ namespace OscTree
 	public class Endpoints
 	{
 		private Dictionary<string, Endpoint> list = new Dictionary<string, Endpoint>();
+		public Dictionary<string, Endpoint> List => list;
+
 		private IOscNode parent;
 
 		public Endpoints(IOscNode parent)

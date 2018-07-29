@@ -4,48 +4,39 @@ using System.Text;
 
 namespace OscTree
 {
-	public class Tree : IOscNode
+	public interface IOscObject
+	{
+		Object OscObject { get; }
+	}
+
+	public class Object : IOscNode
 	{
 		private Address address;
 		public Address Address => address;
 
-		public Endpoints endpoints;
+		private Endpoints endpoints;
 		public Endpoints Endpoints => endpoints;
 
-		private NodeCollection children = new NodeCollection();
-		public NodeCollection Children => children;
+		public NodeCollection Children => null;
 
-		public Tree(Address address)
+		public Routes Targets = new Routes();
+
+		public Object(Address address)
 		{
-			endpoints = new Endpoints(this);
 			this.address = address;
-			//this.address.obj = this;
+			endpoints = new Endpoints(this);
 		}
 
-		~Tree()
+		~Object()
 		{
 			DetachFromParent();
 		}
 
-		public void Add(IOscNode node)
-		{
-			node.Address.parent = this;
-			Children.List.Add(node.Address.ID, node);
-		}
-
-		public void Remove(IOscNode node)
-		{
-			if (Children.List.ContainsKey(node.Address.ID))
-			{
-				Children.List.Remove(node.Address.ID);
-			}
-		}
-
 		public void DetachFromParent()
 		{
-			if(Address.parent != null)
+			if (Address.parent != null)
 			{
-				if(Address.parent.Children.List.ContainsKey(Address.ID))
+				if (Address.parent.Children.List.ContainsKey(Address.ID))
 				{
 					Address.parent.Children.List.Remove(Address.ID);
 				}
@@ -53,35 +44,40 @@ namespace OscTree
 			}
 		}
 
-		public void Send(Route route, object[] arguments)
+		public void Send(object argument)
+		{
+			Send(new object[] { argument });
+		}
+
+		public void Send(object[] arguments)
 		{
 			if(Address.parent != null)
 			{
-				Address.parent.Send(route, arguments);
-			} else
-			{
-				route.CurrentStep = 0;
-				Deliver(route, arguments);
+				foreach(var target in Targets)
+				{
+					Address.parent.Send(target, arguments);
+				}
 			}
 		}
 
+		public void Send(Route route, object[] arguments) { } // not implemented
+
 		public bool Deliver(Route route, object[] arguments)
 		{
-			if(route.Type == Route.RouteType.ID)
+			if (route.Type == Route.RouteType.ID)
 			{
 				if (route.CurrentPart().Equals(address.ID))
 				{
 					route.CurrentStep++;
 					if (Endpoints.Deliver(route, arguments)) return true;
-					if (Children.Deliver(route, arguments)) return true;
 				}
-			} else
+			}
+			else
 			{
-				if(route.CurrentPart().Equals(address.Name))
+				if (route.CurrentPart().Equals(address.Name))
 				{
 					route.CurrentStep++;
 					if (Endpoints.Deliver(route, arguments)) return true;
-					if (Children.Deliver(route, arguments)) return true;
 				}
 			}
 			return false;
@@ -90,7 +86,7 @@ namespace OscTree
 		public string GetRouteString(Route.RouteType type)
 		{
 			string route = string.Empty;
-			if(Address.parent != null)
+			if (Address.parent != null)
 			{
 				route = Address.parent.GetRouteString(type);
 			}
@@ -98,7 +94,8 @@ namespace OscTree
 			if (type == Route.RouteType.ID)
 			{
 				route += Address.ID;
-			} else
+			}
+			else
 			{
 				route += Address.Name;
 			}
@@ -109,9 +106,9 @@ namespace OscTree
 		{
 			if (route.Type == Route.RouteType.NAME) return route.OriginalName;
 
-			if(route.Steps.Count > route.CurrentStep)
+			if (route.Steps.Count > route.CurrentStep)
 			{
-				if(Address.ID.Equals(route.Steps[route.CurrentStep]))
+				if (Address.ID.Equals(route.Steps[route.CurrentStep]))
 				{
 					if (route.Steps.Count > route.CurrentStep + 1)
 					{
@@ -121,10 +118,6 @@ namespace OscTree
 							string result = GetRouteString(Route.RouteType.NAME);
 							result += "/" + next;
 							return result;
-						} else if (Children.List.ContainsKey(next)) 
-						{
-							route.CurrentStep++;
-							return Children.List[next].GetNameOfRoute(route);
 						}
 					}
 				}
@@ -135,7 +128,7 @@ namespace OscTree
 
 		public void UpdateID(string oldID, string newID)
 		{
-			Children.UpdateID(oldID, newID);
+			
 		}
 	}
 }

@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>yOscTree</Title>
+    <Description>A tree concept for sending and receiving OSC Messages</Description>
+    <Authors>yvan vander sanden</Authors>
+    <Owners>Mute</Owners>
   </PropertyGroup>
 
   <ItemGroup>

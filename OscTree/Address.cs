@@ -7,10 +7,23 @@ namespace OscTree
 	public class Address
 	{
 		public string Name { get; set; }
-		public string ID { get; set; }
+
+		private string id = string.Empty;
+		public string ID
+		{
+			get => id;
+			set
+			{
+				if(id != string.Empty && parent != null)
+				{
+					parent.UpdateID(id, value);
+				}
+				id = value;
+			}
+		}
 
 		internal IOscNode parent = null;
-		private IOscNode obj = null;
+		public IOscNode obj = null;
 
 		public Address(string name) 
 			: this(name, Utils.GenerateID())
@@ -21,5 +34,12 @@ namespace OscTree
 			Name = name;
 			ID = id;
 		}
+
+		public int TreeLevel()
+		{
+			if (parent == null) return 0;
+			return parent.Address.TreeLevel() + 1;
+		}
+
 	}
 }
