@@ -4,7 +4,7 @@ using System.Text;
 
 namespace OscTree
 {
-	public class NodeCollection
+	public class NodeCollection : MarshalByRefObject
 	{
 		private Dictionary<string, IOscNode> list = new Dictionary<string, IOscNode>();
 		public Dictionary<string, IOscNode> List => list;

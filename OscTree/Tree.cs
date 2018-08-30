@@ -4,7 +4,10 @@ using System.Text;
 
 namespace OscTree
 {
-	public class Tree : IOscNode
+	public delegate void ErrorHandler(string message);
+	public delegate void ReRoute(Route route, object[] arguments);
+
+	public class Tree : MarshalByRefObject, IOscNode
 	{
 		private Address address;
 		public Address Address => address;
@@ -14,6 +17,14 @@ namespace OscTree
 
 		private NodeCollection children = new NodeCollection();
 		public NodeCollection Children => children;
+
+		
+
+		public ErrorHandler ErrorHandler = null;
+		public ReRoute ReRoute = null;
+
+		private bool ignoreInGui = false;
+		public bool IgnoreInGui { get => ignoreInGui; set => ignoreInGui = value; }
 
 		public Tree(Address address)
 		{
@@ -67,6 +78,12 @@ namespace OscTree
 
 		public bool Deliver(Route route, object[] arguments)
 		{
+			if(ReRoute != null)
+			{
+				ReRoute.Invoke(route, arguments);
+				return true;
+			}
+
 			if(route.Type == Route.RouteType.ID)
 			{
 				if (route.CurrentPart().Equals(address.ID))
@@ -84,6 +101,12 @@ namespace OscTree
 					if (Children.Deliver(route, arguments)) return true;
 				}
 			}
+
+			if(ErrorHandler != null)
+			{
+				ErrorHandler.Invoke("Tree " + Address.Name + "Cannot deliver to route " + route.OriginalName);
+			}
+
 			return false;
 		}
 

@@ -7,9 +7,10 @@ namespace OscTree
 	public interface IOscObject
 	{
 		Object OscObject { get; }
+		void Taint();
 	}
 
-	public class Object : IOscNode
+	public class Object : MarshalByRefObject, IOscNode
 	{
 		private Address address;
 		public Address Address => address;
@@ -60,7 +61,12 @@ namespace OscTree
 			}
 		}
 
-		public void Send(Route route, object[] arguments) { } // not implemented
+		public void Send(Route route, object[] arguments) {
+			if(Address.parent != null)
+			{
+				Address.parent.Send(route, arguments);
+			}
+		} 
 
 		public bool Deliver(Route route, object[] arguments)
 		{

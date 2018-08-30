@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OscTree
 {
-	public class Route
+	public class Route : MarshalByRefObject
 	{
 		public enum RouteType
 		{
@@ -21,6 +21,8 @@ namespace OscTree
 		public List<string> Steps;
 		public int CurrentStep;
 
+		public Dictionary<int, string> Replacements = null;
+
 		public Route(string route, RouteType type)
 		{
 			Type = type;
@@ -31,8 +33,28 @@ namespace OscTree
 
 		public string CurrentPart()
 		{
-			if (CurrentStep < Steps.Count) return Steps[CurrentStep];
+			if (CurrentStep < Steps.Count)
+			{
+				if(Replacements != null && Replacements.ContainsKey(CurrentStep))
+				{
+					return Replacements[CurrentStep];
+				}
+				return Steps[CurrentStep];
+			}
 			else return string.Empty;
+		}
+
+		// route with replacements
+		public string GetActualRoute()
+		{
+			string result = string.Empty;
+			for(int i = 0; i < Steps.Count; i++)
+			{
+				result += "/";
+				if (Replacements != null && Replacements.ContainsKey(i)) result += Replacements[i];
+				else result += Steps[i];
+			}
+			return result;
 		}
 	}
 
@@ -41,8 +63,22 @@ namespace OscTree
 		{
 			foreach(var elm in this)
 			{
-				elm.CurrentStep = 0;
-				elm.ScreenName = root.GetNameOfRoute(elm);
+				if(elm.Replacements == null)
+				{
+					elm.CurrentStep = 0;
+					elm.ScreenName = root.GetNameOfRoute(elm);
+				} else
+				{
+					elm.CurrentStep = 0;
+					OscTree.Route route = new OscTree.Route(root.GetNameOfRoute(elm), OscTree.Route.RouteType.NAME);
+					route.Replacements = new System.Collections.Generic.Dictionary<int, string>();
+					foreach(var replacement in elm.Replacements)
+					{
+						route.Replacements[replacement.Key] = replacement.Value;
+					}
+					elm.ScreenName = route.GetActualRoute();
+				}
+				
 			}
 		}
 	}

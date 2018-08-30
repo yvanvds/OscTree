@@ -4,7 +4,7 @@ using System.Text;
 
 namespace OscTree
 {
-	public class Endpoints
+	public class Endpoints: MarshalByRefObject
 	{
 		private Dictionary<string, Endpoint> list = new Dictionary<string, Endpoint>();
 		public Dictionary<string, Endpoint> List => list;

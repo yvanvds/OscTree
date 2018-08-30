@@ -4,7 +4,7 @@ using System.Text;
 
 namespace OscTree
 {
-	public class Address
+	public class Address : MarshalByRefObject
 	{
 		public string Name { get; set; }
 
@@ -14,7 +14,7 @@ namespace OscTree
 			get => id;
 			set
 			{
-				if(id != string.Empty && parent != null)
+				if(id != string.Empty && parent != null && id != value)
 				{
 					parent.UpdateID(id, value);
 				}
