@@ -6,7 +6,7 @@
     <Description>A tree concept for sending and receiving OSC Messages</Description>
     <Authors>yvan vander sanden</Authors>
     <Owners>Mute</Owners>
-    <Version>1.0.15</Version>
+    <Version>1.0.21</Version>
   </PropertyGroup>
 
   <ItemGroup>

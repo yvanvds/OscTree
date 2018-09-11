@@ -16,6 +16,8 @@ namespace OscTree
 		string GetRouteString(Route.RouteType type);
 		string GetNameOfRoute(Route route);
 
+		Endpoint GetEndpoint(Route route);
+
 		void UpdateID(string oldID, string newID);
 	}
 }

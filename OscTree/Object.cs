@@ -15,6 +15,9 @@ namespace OscTree
 		private Address address;
 		public Address Address => address;
 
+		private Type datatype;
+		public Type DataType => datatype;
+
 		private Endpoints endpoints;
 		public Endpoints Endpoints => endpoints;
 
@@ -22,9 +25,10 @@ namespace OscTree
 
 		public Routes Targets = new Routes();
 
-		public Object(Address address)
+		public Object(Address address, Type datatype)
 		{
 			this.address = address;
+			this.datatype = datatype;
 			endpoints = new Endpoints(this);
 		}
 
@@ -87,6 +91,29 @@ namespace OscTree
 				}
 			}
 			return false;
+		}
+
+		public Endpoint GetEndpoint(Route route)
+		{
+			if(route.Type == Route.RouteType.ID)
+			{
+				if(route.CurrentPart().Equals(address.ID))
+				{
+					route.CurrentStep++;
+					var result = Endpoints.GetEndpoint(route);
+					if (result != null) return result;
+				}
+			} else
+			{
+				if(route.CurrentPart().Equals(address.Name))
+				{
+					route.CurrentStep++;
+					var result = Endpoints.GetEndpoint(route);
+					if (result != null) return result;
+				}
+			}
+
+			return null;
 		}
 
 		public string GetRouteString(Route.RouteType type)

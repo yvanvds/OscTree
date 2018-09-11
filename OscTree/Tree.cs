@@ -6,6 +6,7 @@ namespace OscTree
 {
 	public delegate void ErrorHandler(string message);
 	public delegate void ReRoute(Route route, object[] arguments);
+	public delegate object ValueOverrideHandler(string methodName, object[] arguments);
 
 	public class Tree : MarshalByRefObject, IOscNode
 	{
@@ -18,10 +19,9 @@ namespace OscTree
 		private NodeCollection children = new NodeCollection();
 		public NodeCollection Children => children;
 
-		
-
 		public ErrorHandler ErrorHandler = null;
 		public ReRoute ReRoute = null;
+		public ValueOverrideHandler ValueOverrideHandler = null;
 
 		private bool ignoreInGui = false;
 		public bool IgnoreInGui { get => ignoreInGui; set => ignoreInGui = value; }
@@ -71,6 +71,12 @@ namespace OscTree
 				Address.parent.Send(route, arguments);
 			} else
 			{
+				if (route.ValueOverrideMethodName != null && route.ValueOverrideMethodName != string.Empty && ValueOverrideHandler != null)
+				{
+					var result = ValueOverrideHandler(route.ValueOverrideMethodName, arguments);
+					arguments = new object[] { result };
+				}
+
 				route.CurrentStep = 0;
 				Deliver(route, arguments);
 			}
@@ -108,6 +114,39 @@ namespace OscTree
 			}
 
 			return false;
+		}
+
+		public Endpoint GetEndpoint(Route route)
+		{
+			if(route.Type == Route.RouteType.ID)
+			{
+				if(route.CurrentPart().Equals(address.ID))
+				{
+					route.CurrentStep++;
+					Endpoint endpoint = Endpoints.GetEndpoint(route);
+					if (endpoint != null) return endpoint;
+
+					endpoint = Children.GetEndpoint(route);
+					if (endpoint != null) return endpoint;
+				}
+			} else
+			{
+				if(route.CurrentPart().Equals(address.Name))
+				{
+					route.CurrentStep++;
+					Endpoint endpoint = Endpoints.GetEndpoint(route);
+					if (endpoint != null) return endpoint;
+
+					endpoint = Children.GetEndpoint(route);
+					if (endpoint != null) return endpoint;
+				}
+			}
+			return null;
+		}
+
+		public bool Contains(IOscNode node)
+		{
+			return Children.Contains(node);
 		}
 
 		public string GetRouteString(Route.RouteType type)

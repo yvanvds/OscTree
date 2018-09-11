@@ -34,5 +34,14 @@ namespace OscTree
 			}
 			return false;
 		}
+
+		public Endpoint GetEndpoint(Route route)
+		{
+			if(list.ContainsKey(route.CurrentPart()))
+			{
+				return list[route.CurrentPart()];
+			}
+			return null;
+		}
 	}
 }

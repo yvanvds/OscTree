@@ -22,6 +22,7 @@ namespace OscTree
 		public int CurrentStep;
 
 		public Dictionary<int, string> Replacements = null;
+		public string ValueOverrideMethodName { get; set; } = string.Empty;
 
 		public Route(string route, RouteType type)
 		{

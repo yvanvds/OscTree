@@ -41,5 +41,40 @@ namespace OscTree
 			}
 			return false;
 		}
+
+		public Endpoint GetEndpoint(Route route)
+		{
+			if(route.Type == Route.RouteType.ID)
+			{
+				string key = route.CurrentPart();
+				if(List.ContainsKey(key))
+				{
+					return List[key].GetEndpoint(route);
+				} else
+				{
+					foreach(var item in List.Values)
+					{
+						if (item.Address.Name.Equals(route.CurrentPart(), StringComparison.CurrentCultureIgnoreCase))
+						{
+							return item.GetEndpoint(route);
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+		public bool Contains(IOscNode node)
+		{
+			foreach(var item in List.Values)
+			{
+				if (item == node) return true;
+				if(item is Tree)
+				{
+					if ((item as Tree).Contains(node)) return true;
+				}
+			}
+			return false;
+		}
 	}
 }
