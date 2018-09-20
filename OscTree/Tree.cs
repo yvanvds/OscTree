@@ -26,6 +26,8 @@ namespace OscTree
 		private bool ignoreInGui = false;
 		public bool IgnoreInGui { get => ignoreInGui; set => ignoreInGui = value; }
 
+		public string DataTag { get; set; } = string.Empty;
+
 		public Tree(Address address)
 		{
 			endpoints = new Endpoints(this);
@@ -84,6 +86,12 @@ namespace OscTree
 
 		public bool Deliver(Route route, object[] arguments)
 		{
+			if(DataTag != string.Empty)
+			{
+				Array.Resize(ref arguments, arguments.Length + 1);
+				arguments[arguments.Length - 1] = DataTag;
+			}
+
 			if(ReRoute != null)
 			{
 				ReRoute.Invoke(route, arguments);

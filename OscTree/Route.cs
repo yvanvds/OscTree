@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,43 @@ namespace OscTree
 			CurrentStep = 0;
 		}
 
+		public Route(JObject obj)
+		{
+			if(obj.ContainsKey("Type")) {
+				if(((string)obj["Type"]).Equals("NAME",StringComparison.CurrentCultureIgnoreCase)) {
+					Type = RouteType.NAME;
+				} else
+				{
+					Type = RouteType.ID;
+				}
+			}
+
+			if(obj.ContainsKey("Name"))
+			{
+				originalName = (string)obj["Name"];
+				Steps = originalName.Split('/').Where(s => !string.IsNullOrEmpty(s)).ToList();
+				CurrentStep = 0;
+			}
+
+			if(obj.ContainsKey("Method"))
+			{
+				ValueOverrideMethodName = (string)obj["Method"];
+			}
+
+			if(obj.ContainsKey("Replacements"))
+			{
+				var replacements = obj["Replacements"] as JObject;
+				if(replacements.Count > 0)
+				{
+					Replacements = new Dictionary<int, string>();
+					foreach(var replacement in replacements)
+					{
+						Replacements[Convert.ToInt32(replacement.Key)] = (string)replacement.Value;
+					}
+				}
+			}
+		}
+
 		public string CurrentPart()
 		{
 			if (CurrentStep < Steps.Count)
@@ -57,6 +95,27 @@ namespace OscTree
 			}
 			return result;
 		}
+
+		public JObject ToJSON()
+		{
+			var result = new JObject();
+			result["Name"] = OriginalName;
+			result["Type"] = Type.ToString();
+			result["Method"] = ValueOverrideMethodName;
+			if(Replacements != null)
+			{
+				var replacements = new JObject();
+				foreach(var replacement in Replacements)
+				{
+					replacements[replacement.Key] = replacement.Value;
+				}
+				result["Replacements"] = replacements;
+			}
+
+			return result;
+		}
+
+
 	}
 
 	public class Routes : List<Route> {
