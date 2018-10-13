@@ -107,7 +107,7 @@ namespace OscTree
 				var replacements = new JObject();
 				foreach(var replacement in Replacements)
 				{
-					replacements[replacement.Key] = replacement.Value;
+					replacements[replacement.Key.ToString()] = replacement.Value;
 				}
 				result["Replacements"] = replacements;
 			}

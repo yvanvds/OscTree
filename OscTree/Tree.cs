@@ -105,6 +105,25 @@ namespace OscTree
 					route.CurrentStep++;
 					if (Endpoints.Deliver(route, arguments)) return true;
 					if (Children.Deliver(route, arguments)) return true;
+
+					// if we get here, we cannot deliver
+					if (ErrorHandler != null)
+					{
+						ErrorHandler.Invoke("Tree " + Address.Name + " cannot deliver to route " + route.OriginalName);
+						string childList = string.Empty;
+						foreach(var child in Children.List)
+						{
+							childList += child.Key + ", ";
+						}
+						ErrorHandler.Invoke("Available children are: " + childList);
+						string endpointlist = string.Empty;
+						foreach(var child in Endpoints.List)
+						{
+							endpointlist += child.Key + ", ";
+						}
+						ErrorHandler.Invoke("Available endpoints are: " + endpointlist);
+					}
+					return false;
 				}
 			} else
 			{
@@ -113,6 +132,25 @@ namespace OscTree
 					route.CurrentStep++;
 					if (Endpoints.Deliver(route, arguments)) return true;
 					if (Children.Deliver(route, arguments)) return true;
+
+					// if we get here, we cannot deliver
+					if (ErrorHandler != null)
+					{
+						ErrorHandler.Invoke("Tree " + Address.Name + " cannot deliver to route " + route.OriginalName);
+						string childList = string.Empty;
+						foreach (var child in Children.List)
+						{
+							childList += child.Value.Address.Name + ", ";
+						}
+						ErrorHandler.Invoke("Available children are: " + childList);
+						string endpointlist = string.Empty;
+						foreach (var child in Endpoints.List)
+						{
+							endpointlist += child.Value.Name + ", ";
+						}
+						ErrorHandler.Invoke("Available endpoints are: " + endpointlist);
+					}
+					return false;
 				}
 			}
 

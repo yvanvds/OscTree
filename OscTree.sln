@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OscTree", "OscTree\OscTree.csproj", "{A10C8382-D5F0-4F4F-AFBA-271311457E38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OscTree", "OscTree\OscTree.csproj", "{A10C8382-D5F0-4F4F-AFBA-271311457E38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OscTest", "OscTest\OscTest.csproj", "{BCF039EA-9B54-4658-BB7B-FD3A885525A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A10C8382-D5F0-4F4F-AFBA-271311457E38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A10C8382-D5F0-4F4F-AFBA-271311457E38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A10C8382-D5F0-4F4F-AFBA-271311457E38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCF039EA-9B54-4658-BB7B-FD3A885525A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCF039EA-9B54-4658-BB7B-FD3A885525A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCF039EA-9B54-4658-BB7B-FD3A885525A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCF039EA-9B54-4658-BB7B-FD3A885525A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
