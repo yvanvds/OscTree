@@ -76,5 +76,10 @@ namespace OscTree
 			}
 			return false;
 		}
+
+		public void Clear()
+		{
+			List.Clear();
+		}
 	}
 }

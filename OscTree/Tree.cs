@@ -54,6 +54,12 @@ namespace OscTree
 			}
 		}
 
+		public void Clear()
+		{
+			Children.Clear();
+			endpoints.Clear();
+		}
+
 		public void DetachFromParent()
 		{
 			if(Address.parent != null)

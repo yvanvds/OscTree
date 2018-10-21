@@ -25,6 +25,11 @@ namespace OscTree
 			}
 		}
 
+		public void Clear()
+		{
+			list.Clear();
+		}
+
 		public bool Deliver(Route route, object[] arguments)
 		{
 			if (list.ContainsKey(route.CurrentPart()))
